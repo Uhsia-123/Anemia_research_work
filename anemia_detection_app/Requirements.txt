@@ -1,0 +1,6 @@
+streamlit>=1.37
+tensorflow>=2.16
+numpy
+pandas
+joblib
+scikit-learn

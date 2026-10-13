@@ -1,0 +1,19 @@
+[
+    "age",
+    "gender",
+    "bmi",
+    "diet_omnivore",
+    "diet_pescatarian",
+    "diet_vegan",
+    "diet_vegetarian",
+    "iron_percent_rda",
+    "vitamin_b12_percent_rda",
+    "folate_percent_rda",
+    "symptoms_count",
+    "has_fatigue",
+    "has_muscle_weakness",
+    "has_numbness_tingling",
+    "has_memory_problems",
+    "has_pale_skin",
+    "has_bone_pain"
+]
