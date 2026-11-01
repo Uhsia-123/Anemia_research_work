@@ -19,7 +19,15 @@ import joblib
 import numpy as np
 import pandas as pd
 import streamlit as st
+import os
+
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+
 import tensorflow as tf
+
+tf.get_logger().setLevel("ERROR")
+
 
 # --------------------------------------------------------------------------
 # 0. PAGE CONFIG
@@ -173,29 +181,37 @@ FORT_SLOTS = 3
 # --------------------------------------------------------------------------
 # 2. REFERENCE DIETARY ALLOWANCES (US NIH / National Academies RDA)
 # --------------------------------------------------------------------------
+
+# ICMR–NIN Recommended Dietary Allowances for Indians, 2020
 RDA_SOURCE = (
-    "US NIH Office of Dietary Supplements / National Academies RDAs "
-    "(non-pregnant, non-lactating)."
+    "ICMR–NIN Recommended Dietary Allowances for Indians, 2020 "
+    "(non-pregnant, non-lactating; adult iron uses sedentary-work values)."
 )
 
-
 def reference_rda(age: int, sex: str) -> dict[str, float]:
-    """RDA for iron (mg), vitamin B12 (µg) and folate (µg DFE)."""
+    """Return Indian RDA for iron (mg), vitamin B12 (µg), and folate (µg/day)."""
     male = sex == "Male"
-    if age <= 3:
-        iron, b12, folate = 7, 0.9, 150
-    elif age <= 8:
-        iron, b12, folate = 10, 1.2, 200
-    elif age <= 13:
-        iron, b12, folate = 8, 1.8, 300
-    elif age <= 18:
-        iron, b12, folate = (11 if male else 15), 2.4, 400
-    elif age <= 50:
-        iron, b12, folate = (8 if male else 18), 2.4, 400
-    else:
-        iron, b12, folate = 8, 2.4, 400
-    return {"iron": float(iron), "b12": float(b12), "folate": float(folate)}
 
+    if age <= 3:                  # Children 1–3 years
+        iron, b12, folate = 8, 1.2, 120
+    elif age <= 6:                # Children 4–6 years
+        iron, b12, folate = 11, 2.2, 135
+    elif age <= 9:                # Children 7–9 years
+        iron, b12, folate = 15, 2.2, 175
+    elif age <= 12:               # Boys/girls 10–12 years
+        iron, b12, folate = (16 if male else 28), 2.2, (220 if male else 225)
+    elif age <= 15:               # Boys/girls 13–15 years
+        iron, b12, folate = (22 if male else 30), 2.2, (285 if male else 245)
+    elif age <= 18:               # Boys/girls 16–18 years
+        iron, b12, folate = (26 if male else 32), 2.2, (340 if male else 270)
+    else:                         # Adults; iron uses sedentary-work RDA
+        iron, b12, folate = (19 if male else 29), 2.2, (300 if male else 200)
+
+    return {
+        "iron": float(iron),
+        "b12": float(b12),
+        "folate": float(folate),
+    }
 
 # --------------------------------------------------------------------------
 # 3. SYMPTOMS
